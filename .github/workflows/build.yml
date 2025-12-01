@@ -39,15 +39,15 @@ jobs:
           swap-size-gb: 40
 
       - name: Run build
-  run: |
+        run: |
            export KCFLAGS="-Wno-stack-usage"    # تجاهل تحذيرات stack usage
            export LLVM=1                        # تأكد أن build يستخدم LLVM إذا مطلوب
            export DEVICE=${{matrix.device}}
            export KSU=1
            ./build.sh
  
-      - name: Upload kernel
-        uses: actions/upload-artifact@v4
-        with:
-          name: O_kernel-${{matrix.device}}
-          path: AnyKernel3/O*.zip
+             - name: Upload kernel
+               uses: actions/upload-artifact@v4
+              with:
+                name: O_kernel-${{matrix.device}}
+                path: AnyKernel3/O*.zip
