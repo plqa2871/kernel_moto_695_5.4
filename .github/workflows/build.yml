@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        device: [g84_fts, g84_gdx]
+        device: [g84_fts]
     name: "🚧 Build for ${{matrix.device}}"
 
     steps:
@@ -36,18 +36,14 @@ jobs:
       - name: Set Swap Space
         uses: pierotofy/set-swap-space@master
         with:
-          swap-size-gb: 40
+          swap-size-gb: 60
 
       - name: Run build
         run: |
-           export KCFLAGS="-Wno-stack-usage"    # تجاهل تحذيرات stack usage
-           export LLVM=1                        # تأكد أن build يستخدم LLVM إذا مطلوب
-           export DEVICE=${{matrix.device}}
-           export KSU=1
-           ./build.sh
- 
-             - name: Upload kernel
-               uses: actions/upload-artifact@v4
-              with:
-                name: O_kernel-${{matrix.device}}
-                path: AnyKernel3/O*.zip
+          DEVICE=${{matrix.device}} KSU=1 ./build.sh
+
+      - name: Upload kernel
+        uses: actions/upload-artifact@v4
+        with:
+          name: O_kernel-${{matrix.device}}
+          path: AnyKernel3/O*.zip
