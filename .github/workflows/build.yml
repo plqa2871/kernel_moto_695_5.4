@@ -36,7 +36,7 @@ jobs:
       - name: Set Swap Space
         uses: pierotofy/set-swap-space@master
         with:
-          swap-size-gb: 30
+          swap-size-gb: 40
 
       - name: Run build
         run: |
@@ -47,11 +47,3 @@ jobs:
         with:
           name: O_kernel-${{matrix.device}}
           path: AnyKernel3/O*.zip
-
-      - name: Upload to Telegram
-        uses: appleboy/telegram-action@master
-        with:
-          to: ${{ secrets.TELEGRAM_CHAT_ID }}
-          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          document: AnyKernel3/O*.zip
-          message: "Build COmpleted"
