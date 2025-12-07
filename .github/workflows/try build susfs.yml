@@ -42,7 +42,6 @@ jobs:
       - name: Prepare KernelSU
         run: |
           # نسخ الباتش إلى المستودع الثاني
-          mkdir -p KernelSU-Next/KernelSU
           cp KernelSU/10_enable_susfs_for_ksu.patch KernelSU-Next/10_enable_susfs_for_ksu.patch
           
           # نسخ sucompat.h
