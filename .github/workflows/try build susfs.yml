@@ -39,21 +39,22 @@ jobs:
           swap-size-gb: 60
 
       # === خطوات نسخ KernelSU وتنفيذ الباتشات قبل البناء ===
-      - name: Prepare KernelSU
+      - name: Checkout KernelSU-Next
+        uses: actions/checkout@v4
+        with:
+          repository: KernelSU-Next/KernelSU-Next
+          ref: 0d6bdc6364cbfc73517dcfdf7ab23b0ba8045553
+          path: KernelSU-Next  # سينزل هنا
+
+      - name: Copy patches and files
         run: |
-          # نسخ الباتش إلى المستودع الموجود
           cp KernelSU/10_enable_susfs_for_ksu.patch KernelSU-Next/10_enable_susfs_for_ksu.patch
-          
-          # نسخ sucompat.h
           cp KernelSU/kernel/sucompat.h KernelSU-Next/kernel/sucompat.h
-          
-          # الانتقال إلى KernelSU-Next وتنفيذ الباتش
           cd KernelSU-Next
           git apply 10_enable_susfs_for_ksu.patch
           cd ..
-
-          # تنفيذ باتش kernel الأساسي من جذر المستودع
           git apply 50_add_susfs_in_kernel-5.4.patch
+
 
       - name: Run build
         run: |
