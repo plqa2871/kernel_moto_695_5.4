@@ -1,0 +1,65 @@
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        device: [g84_fts]
+    name: "🚧 Build for ${{matrix.device}}"
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "Asia/Kolkata"
+
+      - name: Setup Toolchains
+        run: |
+          sudo apt update
+          sudo apt install bison flex libssl-dev libarchive-tools -y
+          mkdir -p toolchain
+          cd toolchain
+          echo 'Download antman and sync'
+          bash <(curl -s "https://raw.githubusercontent.com/Neutron-Toolchains/antman/main/antman") -S=05012024
+          echo 'Done'
+
+      - name: Set Swap Space
+        uses: pierotofy/set-swap-space@master
+        with:
+          swap-size-gb: 60
+
+      # === خطوات نسخ KernelSU وتنفيذ الباتشات قبل البناء ===
+      - name: Prepare KernelSU
+        run: |
+          # نسخ الباتش إلى المستودع الثاني
+          mkdir -p KernelSU-Next/KernelSU
+          cp KernelSU/10_enable_susfs_for_ksu.patch KernelSU-Next/10_enable_susfs_for_ksu.patch
+          
+          # نسخ sucompat.h
+          cp KernelSU/kernel/sucompat.h KernelSU-Next/kernel/sucompat.h
+          
+          # تنفيذ باتش KernelSU
+          git apply KernelSU-Next/10_enable_susfs_for_ksu.patch
+          
+          # تنفيذ باتش kernel الأساسي
+          git apply 50_add_susfs_in_kernel-5.4.patch
+
+      - name: Run build
+        run: |
+          DEVICE=${{matrix.device}} KSU=1 ./build.sh
+
+      - name: Upload kernel
+        uses: actions/upload-artifact@v4
+        with:
+          name: O_kernel-${{matrix.device}}
+          path: AnyKernel3/O*.zip
