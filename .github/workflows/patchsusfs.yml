@@ -1,0 +1,33 @@
+name: Apply Patches
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  apply_patches:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        persist-credentials: true
+
+    - name: Apply first patch
+      run: |
+        git apply source/50_add_susfs_in_kernel-5.4.patch
+        echo "First patch applied"
+
+    - name: Apply second patch
+      run: |
+        git apply source/KernelSu/10_enable_susfs_for_ksu.patch
+        echo "Second patch applied"
+
+    - name: Commit and push changes
+      run: |
+        git add .
+        git commit -m "Apply SUSFS patches" || echo "No changes to commit"
+        git push
