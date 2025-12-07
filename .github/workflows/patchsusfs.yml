@@ -18,7 +18,7 @@ jobs:
 
     - name: Apply first patch
       run: |
-        git apply KernelSu/10_enable_susfs_for_ksu.patch
+        git apply KernelSU/10_enable_susfs_for_ksu.patch
         echo "First patch applied"
 
     - name: Apply second patch
