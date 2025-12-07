@@ -41,16 +41,18 @@ jobs:
       # === خطوات نسخ KernelSU وتنفيذ الباتشات قبل البناء ===
       - name: Prepare KernelSU
         run: |
-          # نسخ الباتش إلى المستودع الثاني
+          # نسخ الباتش إلى المستودع الموجود
           cp KernelSU/10_enable_susfs_for_ksu.patch KernelSU-Next/10_enable_susfs_for_ksu.patch
           
           # نسخ sucompat.h
           cp KernelSU/kernel/sucompat.h KernelSU-Next/kernel/sucompat.h
           
-          # تنفيذ باتش KernelSU
-          git apply KernelSU-Next/10_enable_susfs_for_ksu.patch
-          
-          # تنفيذ باتش kernel الأساسي
+          # الانتقال إلى KernelSU-Next وتنفيذ الباتش
+          cd KernelSU-Next
+          git apply 10_enable_susfs_for_ksu.patch
+          cd ..
+
+          # تنفيذ باتش kernel الأساسي من جذر المستودع
           git apply 50_add_susfs_in_kernel-5.4.patch
 
       - name: Run build
